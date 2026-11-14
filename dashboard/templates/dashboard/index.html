@@ -1,0 +1,57 @@
+{% load static %}<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Utilisation de Claude</title>
+  <link rel="stylesheet" href="{% static 'dashboard/style.css' %}">
+</head>
+<body>
+  <header>
+    <h1>Utilisation de Claude</h1>
+    <div class="controls">
+      <nav>
+        {% for p in periods %}
+          <a href="?period={{ p.key }}" class="{% if p.active %}active{% endif %}">{{ p.label }}</a>
+        {% endfor %}
+      </nav>
+      <form method="post" action="{% url 'refresh' %}" id="refresh-form">
+        {% csrf_token %}
+        <input type="hidden" name="period" value="{{ period }}">
+        <button type="submit" id="refresh-button">Actualiser</button>
+      </form>
+    </div>
+  </header>
+
+  {% if banner_text %}
+    <div class="banner {{ banner_class }}">{{ banner_text }}</div>
+  {% endif %}
+
+  <section class="summary">
+    {% for item in summary %}
+      <div class="card {{ item.css_class }}">
+        <span class="label">{{ item.label }}</span>
+        <span class="value">{{ item.utilization }}</span>
+        <span class="reset">Réinitialisation : {{ item.resets_at }}</span>
+      </div>
+    {% endfor %}
+    <div class="card meta">
+      <span class="label">Dernier relevé</span>
+      <span class="value small">{{ last_fetch }}</span>
+    </div>
+  </section>
+
+  <main>
+    {% if has_data %}
+      <div class="chart-box"><canvas id="usage-chart"></canvas></div>
+    {% else %}
+      <p class="empty">Aucune donnée sur cette période.</p>
+    {% endif %}
+  </main>
+
+  {{ chart_data|json_script:"chart-data" }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <script src="{% static 'dashboard/chart.js' %}"></script>
+</body>
+</html>
