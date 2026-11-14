@@ -19,8 +19,11 @@ copy .env.example .env   # puis remplir CLAUDE_ORG_ID et CLAUDE_COOKIES
 ```powershell
 .venv\Scripts\python -m claude_usage --once    # une collecte (test)
 .venv\Scripts\python -m claude_usage           # boucle infinie (toutes les heures)
-.\register_task.ps1                            # tâche planifiée Windows, toutes les heures
 ```
+
+En production, la boucle et le tableau de bord sont lancés et surveillés par
+[HomeRun](../homerun) (services `claude_usage_collector` et `claude_usage_web`) : ne pas les
+lancer à la main en parallèle.
 
 Quand la session expire, le journal (`logs/collector.log`) affiche une erreur HTTP 401/403 :
 recopiez alors le cookie depuis le navigateur dans `.env`.
@@ -41,6 +44,11 @@ sa valeur a changé (jamais la valeur elle-même).
 
 ## Tableau de bord web
 
+Servi par HomeRun (waitress + WhiteNoise) sur `http://<IP Tailscale>:8060/`. Ajouter l'IP
+Tailscale à `ALLOWED_HOSTS` dans `.env`.
+
+En développement :
+
 ```powershell
 .venv\Scripts\python manage.py runserver
 ```
@@ -49,7 +57,7 @@ Puis ouvrir http://127.0.0.1:8060/ (port par défaut) : courbes 5 h (bleu) et se
 du supplément (rouge) seulement si elle dépasse 0 sur la période. Échelle fixe de 0 à 100 %,
 7 derniers jours par défaut (liens pour 24 h, 30 jours, tout).
 
-Le bouton **Actualiser** lance un relevé immédiat. La tâche planifiée horaire n'est pas modifiée.
+Le bouton **Actualiser** lance un relevé immédiat. La collecte horaire n'est pas modifiée.
 
 ## Alertes Discord
 

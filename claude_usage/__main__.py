@@ -24,7 +24,7 @@ def main() -> int:
     parser.add_argument(
         "--once",
         action="store_true",
-        help="Une seule collecte puis arrêt (pour le Planificateur de tâches).",
+        help="Une seule collecte puis arrêt (test).",
     )
     parser.add_argument("--debug", action="store_true", help="Journalisation détaillée.")
     args = parser.parse_args()

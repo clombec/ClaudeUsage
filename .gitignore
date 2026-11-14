@@ -11,3 +11,6 @@ logs/
 .venv/
 __pycache__/
 *.pyc
+
+# Collected static files (manage.py collectstatic)
+staticfiles/
