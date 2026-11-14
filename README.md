@@ -21,9 +21,9 @@ copy .env.example .env   # puis remplir CLAUDE_ORG_ID et CLAUDE_COOKIES
 .venv\Scripts\python -m claude_usage           # boucle infinie (toutes les heures)
 ```
 
-En production, la boucle et le tableau de bord sont lancés et surveillés par
-[HomeRun](../homerun) (services `claude_usage_collector` et `claude_usage_web`) : ne pas les
-lancer à la main en parallèle.
+En production, [HomeRun](../homerun) lance `--once` toutes les heures (tâche
+`claude_usage_collect`) et sert le tableau de bord (service `claude_usage_web`) : ne pas
+lancer la boucle à la main en parallèle. Le mode boucle reste utile hors HomeRun.
 
 Quand la session expire, le journal (`logs/collector.log`) affiche une erreur HTTP 401/403 :
 recopiez alors le cookie depuis le navigateur dans `.env`.
